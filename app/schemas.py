@@ -16,15 +16,14 @@ class BaseUser(BaseModel):
 # User Input model (chemo_need and radio_need removed)
 class UserInput(BaseUser):
     password: str
-    data: Dict = Field(default_factory=dict)  # JSON-like data, defaults to empty dict
-
+    
 # User Output model (chemo_need and radio_need kept here, AI-determined)
 class UserOutput(BaseUser):
     id: int
     chemo_need: Optional[float] = Field(default=None, ge=0, le=100)  # AI-determined
     radio_need: Optional[float] = Field(default=None, ge=0, le=100)  # AI-determined
-    chemo_data: Dict
-    radio_data: Dict
+    chemo_data: Optional[Dict] = {}
+    radio_data: Optional[Dict] = {}
 
 # Login model (unchanged)
 class Login(BaseModel):
@@ -40,7 +39,7 @@ class BaseChemoSlot(BaseModel):
     drug_name: str
     dosage: str
     duration: str
-    infusion_time: str  # E.g., "2 hours"
+    #infusion_time: Optional[str]  # E.g., "2 hours"
     method: str  # IV, pill...
     status: str  # Scheduled, Done...
     scheduled_at: datetime

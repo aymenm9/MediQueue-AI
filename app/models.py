@@ -18,6 +18,8 @@ class User(Base):
     chemo_data: Mapped[dict] = mapped_column(JSON, nullable=True)
     radio_data: Mapped[dict] = mapped_column(JSON, nullable=True)
 
+    
+
 
 # ChemoSlot model
 class ChemoSlot(Base):

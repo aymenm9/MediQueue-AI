@@ -3,10 +3,10 @@ import os
 from google import genai
 from google.genai import types
 
-from key import API_KEY
+#from key import API_KEY
 from models import User
 
-def test_ai():
+'''def test_ai():
     client = genai.Client(api_key=API_KEY)
     chat = client.chats.create(model="gemini-2.0-flash")
     response = chat.send_message_stream("I have 2 dogs in my house.")
@@ -17,10 +17,10 @@ def test_ai():
         print(chunk.text, end="")
     for message in chat._curated_history:
         print(f'role - ', message.role, end=": ")
-        print(message.parts[0].text)
+        print(message.parts[0].text)'''
 import random
 def genrate_rating_chemo(user:User):
-    return random.Random() * 100
+    return random.random() * 100
     '''def get_urgency_score(patient: PatientData) -> float:
     """Send patient data to Gemini AI and get urgency score."""
     model = genai.GenerativeModel("gemini-pro")  # Use Gemini Pro model
@@ -87,4 +87,4 @@ def genrate_rating_radio(user:User):
         print(chunk.text, end="")'''
     
 def genrate_rating_radio(user:User):
-    return random.Random() * 100
+    return random.random() * 100.0
