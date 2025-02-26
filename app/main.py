@@ -8,7 +8,7 @@ from schemas import UserInput, UserOutput, Token,Login
 from models import engine, create_db, get_db 
 from models import User
 from auth import get_password_hash,verify_password, create_jwt, get_current_user
-from ai_util import test_ai
+from ai_util import genrate_rating_chemo, genrate_rating_radio
 app = FastAPI()
 
 @asynccontextmanager
@@ -27,22 +27,17 @@ async def root(user:User = Depends(get_current_user)):
     return UserOutput.model_validate(user)
 
 
-@app.get('/test_ai')
-async def root():
-    return test_ai()
-
-
 
 @app.post("/signup", responses={**singup_exaption})
 async def signup(user:UserInput, db:Session = Depends(get_db) )->Token:
-    new_user = User(user_name = user.user_name, password = get_password_hash(user.password))
+    new_user = User(first_name = user.first_name, last_name = user.last_name,email = user.email, password = get_password_hash(user.password),chemo_need = None, radio_need = None)
     db.add(new_user)
     db.commit()
     return await create_jwt(new_user)
 
 @app.post('/login',responses={**login_exaption})
 async def login(login_data:Login, db:Session = Depends(get_db))-> Token:
-    user:User = db.execute(select(User).where(User.user_name == login_data.user_name)).scalar_one_or_none()
+    user:User = db.execute(select(User).where(User.email == login_data.email)).scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail='user name does not exist')
     
@@ -50,3 +45,11 @@ async def login(login_data:Login, db:Session = Depends(get_db))-> Token:
         raise HTTPException(status_code=401, detail='Incorrect password')
     
     return await create_jwt(user)   
+
+@app.post('/add_chemo_data',responses={**auth_exaption})
+async def add_chemo_data(data:dict , user:User = Depends(get_current_user),db:Session = Depends(get_db))->float:
+    user.chemo_need= genrate_rating_chemo(user)
+
+@app.post('/add_radio_data',responses={**auth_exaption})
+async def add_radio_data(data:dict , user:User = Depends(get_current_user),db:Session = Depends(get_db))->float:
+    user.chemo_need= genrate_rating_radio(user)
